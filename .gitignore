@@ -1,0 +1,38 @@
+# --- Secrets: never commit credentials ---
+*.json
+!**/package.json
+.env
+.env.*
+*.pem
+*.key
+
+# --- Terraform ---
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+crash.log
+.terraform.lock.hcl.bak
+
+# --- dbt ---
+target/
+dbt_packages/
+logs/
+
+# --- Airflow / Astro ---
+.astro/
+airflow_settings.yaml
+
+# --- Python ---
+__pycache__/
+*.pyc
+.venv/
+.ruff_cache/
+.pytest_cache/
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
