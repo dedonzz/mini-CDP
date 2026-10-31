@@ -30,8 +30,9 @@ Claude 的角色是**資料工程教練兼協作工程師**。使用者以繁體
 - [x] M0-1 WSL2 + Docker
 - [x] M0-2 工具：Terraform 1.17、gcloud、Astro CLI 1.47、uv + Python 3.11
 - [x] M0-3 repo 初始化並推上 GitHub（github.com/dedonzz/mini-CDP，公開）
-- [ ] M0-4 GCP 專案、帳單、預算提醒、BigQuery 用量上限、gcloud 登入
-- [ ] M0-5 Terraform 建立 datasets（raw/staging/marts）與 GCS bucket
+- [x] M0-4 GCP 專案 `mini-cdp-dedonzz`、帳單、預算提醒（TWD 200）、ADC 登入（BigQuery 每日上限待確認）
+- [x] M0-5 Terraform 建立 datasets（cdp_raw/cdp_staging/cdp_marts）與 bucket `mini-cdp-dedonzz-lake`
+- [ ] M0 面試題回顧
 - [ ] M1 raw / staging 層 + 資料品質檢查
 - [ ] M2 marts：維度表、事實表、Customer 360、RFM
 - [ ] M3 Airflow 排程與冪等
