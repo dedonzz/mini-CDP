@@ -5,6 +5,8 @@ profile: mini_cdp
 model-paths: ["models"]
 macro-paths: ["macros"]
 test-paths: ["tests"]
+# Airflow 容器內專案為唯讀掛載，套件改裝到可寫目錄
+packages-install-path: "{{ env_var('DBT_PACKAGES_DIR', 'dbt_packages') }}"
 
 models:
   mini_cdp:

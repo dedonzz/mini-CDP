@@ -1,0 +1,23 @@
+# 本機開發：程式碼與 ADC 以唯讀方式掛進容器，不建 service account 金鑰檔。
+# ADC 需為 640（chmod 640 ~/.config/gcloud/application_default_credentials.json），
+# 容器使用者（uid 50000）透過 group_add 取得主機 gid 1000 的讀取權。
+x-mini-cdp: &mini-cdp
+  group_add: ["1000"]
+  volumes:
+    - ../ingestion:/usr/local/airflow/mini_cdp/ingestion:ro
+    - ../dbt:/usr/local/airflow/mini_cdp/dbt:ro
+    - ${HOME}/.config/gcloud/application_default_credentials.json:/usr/local/airflow/gcloud/adc.json:ro
+  environment:
+    GOOGLE_APPLICATION_CREDENTIALS: /usr/local/airflow/gcloud/adc.json
+    GOOGLE_CLOUD_PROJECT: mini-cdp-dedonzz
+    # dbt 專案是唯讀掛載，可寫的產物都導到 /tmp
+    DBT_PROFILES_DIR: /usr/local/airflow/mini_cdp/dbt
+    DBT_TARGET_PATH: /tmp/dbt/target
+    DBT_LOG_PATH: /tmp/dbt/logs
+    DBT_PACKAGES_DIR: /tmp/dbt/packages
+    DBT_SEND_ANONYMOUS_USAGE_STATS: "false"
+
+services:
+  scheduler: *mini-cdp
+  dag-processor: *mini-cdp
+  triggerer: *mini-cdp
