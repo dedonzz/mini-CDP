@@ -17,9 +17,11 @@ with orders as (
 ),
 
 top_category as (
-    select user_id, category as favorite_category
+    select
+        user_id,
+        category as favorite_category
     from {{ ref('fct_order_items') }}
-    join {{ ref('dim_products') }} using (product_id)
+    inner join {{ ref('dim_products') }} using (product_id)
     where is_revenue
     group by user_id, category
     qualify row_number() over (partition by user_id order by sum(sale_price) desc, category) = 1

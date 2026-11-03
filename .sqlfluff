@@ -1,0 +1,16 @@
+[sqlfluff]
+dialect = bigquery
+templater = jinja
+max_line_length = 120
+# 只檢查格式與明顯錯誤；別名與關鍵字大小寫依專案慣例
+exclude_rules = AL01, AL07, AM04, ST06, RF02, RF03, RF04, CV03, ST07
+
+[sqlfluff:templater:jinja]
+apply_dbt_builtins = True
+load_macros_from_path = dbt/macros
+
+[sqlfluff:rules:capitalisation.keywords]
+capitalisation_policy = lower
+
+[sqlfluff:rules:capitalisation.functions]
+extended_capitalisation_policy = lower

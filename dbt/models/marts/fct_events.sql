@@ -24,5 +24,9 @@ select
     event_date
 from {{ ref('stg_events') }}
 {% if is_incremental() %}
-where event_date {% if ds %}= date '{{ ds }}'{% else %}>= date_sub(current_date(), interval 3 day){% endif %}
+    {% if ds %}
+        where event_date = date '{{ ds }}'
+    {% else %}
+        where event_date >= date_sub(current_date(), interval 3 day)
+    {% endif %}
 {% endif %}

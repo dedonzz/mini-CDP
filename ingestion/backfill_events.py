@@ -8,9 +8,8 @@ import argparse
 import logging
 from datetime import date
 
-from google.cloud import bigquery
-
 from extract import MAX_BYTES, PROJECT, SOURCE, TABLES
+from google.cloud import bigquery
 
 
 def main() -> None:
@@ -29,7 +28,7 @@ def main() -> None:
         time_partitioning=bigquery.TimePartitioning(field="dt"),
     )
     sql = f"""
-SELECT {TABLES['events'][1]}, CURRENT_TIMESTAMP() AS _extracted_at, DATE(created_at) AS dt
+SELECT {TABLES["events"][1]}, CURRENT_TIMESTAMP() AS _extracted_at, DATE(created_at) AS dt
 FROM `{SOURCE}.events`
 WHERE created_at < TIMESTAMP(DATE_ADD('{args.until}', INTERVAL 1 DAY))"""
     job = client.query(sql, job_config=cfg)
