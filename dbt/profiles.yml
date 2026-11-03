@@ -1,0 +1,13 @@
+# 認證走 gcloud ADC（oauth），repo 內不放任何金鑰。
+mini_cdp:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      method: oauth
+      project: "{{ env_var(\"GCP_PROJECT\", \"mini-cdp-dedonzz\") }}"
+      dataset: cdp_staging
+      location: US
+      threads: 4
+      job_execution_timeout_seconds: 300
+      maximum_bytes_billed: 1000000000  # 單一查詢超過 1 GB 直接失敗，防止意外掃描

@@ -1,0 +1,16 @@
+name: mini_cdp
+version: "1.0.0"
+profile: mini_cdp
+
+model-paths: ["models"]
+macro-paths: ["macros"]
+test-paths: ["tests"]
+
+models:
+  mini_cdp:
+    staging:
+      +schema: cdp_staging
+      +materialized: view
+    marts:
+      +schema: cdp_marts
+      +materialized: table
