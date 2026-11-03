@@ -21,6 +21,7 @@ crash.log
 target/
 dbt_packages/
 logs/
+.user.yml
 
 # --- Airflow / Astro ---
 .astro/
