@@ -1,0 +1,67 @@
+version: 2
+
+models:
+  - name: dim_customers
+    description: 客戶維度，一列一位註冊用戶（含未下單者）。
+    columns:
+      - name: user_id
+        data_tests: [unique, not_null]
+
+  - name: dim_products
+    description: 商品維度，一列一個商品。
+    columns:
+      - name: product_id
+        data_tests: [unique, not_null]
+
+  - name: fct_order_items
+    description: 品項事實表；is_revenue = 未取消且未退貨。
+    columns:
+      - name: order_item_id
+        data_tests: [unique, not_null]
+      - name: user_id
+        data_tests:
+          - relationships:
+              arguments: { to: ref('dim_customers'), field: user_id }
+
+  - name: fct_orders
+    description: 訂單事實表，金額由品項加總。
+    data_tests:
+      - dbt_utils.expression_is_true:
+          arguments: { expression: "net_revenue <= gross_revenue" }
+    columns:
+      - name: order_id
+        data_tests: [unique, not_null]
+
+  - name: fct_events
+    description: 行為事件事實表（incremental，insert_overwrite 依 event_date）。
+    columns:
+      - name: event_id
+        data_tests: [unique, not_null]
+
+  - name: customer_rfm
+    description: RFM 分數與分群，一列一位客戶。
+    data_tests:
+      - dbt_utils.equal_rowcount:
+          arguments: { compare_model: ref('dim_customers') }
+    columns:
+      - name: user_id
+        data_tests: [unique, not_null]
+      - name: rfm_segment
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [champions, loyal, new_customers, need_attention, at_risk, hibernating, non_purchaser]
+
+  - name: customer_360
+    description: Customer 360，一列一位客戶，整合基本資料、交易、行為與 RFM。
+    data_tests:
+      - dbt_utils.equal_rowcount:
+          arguments: { compare_model: ref('dim_customers') }
+    columns:
+      - name: user_id
+        data_tests: [unique, not_null]
+      - name: lifetime_revenue
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments: { min_value: 0 }

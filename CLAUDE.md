@@ -44,11 +44,11 @@ M1 raw / staging 層 + 資料品質檢查
 - [x] M1-5 🧑 資料品質：not_null、unique、relationships、accepted_values、source freshness
 
 M2 marts：維度表、事實表、Customer 360、RFM
-- [ ] M2-1 🧑 `dim_customers`（含未下單用戶）、`dim_products`
-- [ ] M2-2 🧑 `fct_orders` / `fct_order_items`（partition + cluster）
-- [ ] M2-3 🧑 `customer_360`（每位客戶一列）
-- [ ] M2-4 🧑 RFM 打分與分群（未購買另成一群）
-- [ ] M2-5 🧑 incremental model 評估 + dbt docs lineage
+- [x] M2-1 🧑 `dim_customers`（含未下單用戶）、`dim_products`
+- [x] M2-2 🧑 `fct_orders` / `fct_order_items`（partition + cluster）
+- [x] M2-3 🧑 `customer_360`（每位客戶一列）
+- [x] M2-4 🧑 RFM 打分與分群（未購買另成一群）
+- [x] M2-5 🧑 incremental model 評估 + dbt docs lineage
 
 M3 Airflow 排程與冪等
 - [ ] M3-1 🤖 `astro dev init`、唯讀掛載 ADC、依賴安裝
