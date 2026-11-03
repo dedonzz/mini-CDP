@@ -51,14 +51,15 @@ M2 marts：維度表、事實表、Customer 360、RFM
 - [x] M2-5 🧑 incremental model 評估 + dbt docs lineage
 
 M3 Airflow 排程與冪等
-- [ ] M3-1 🤖 `astro dev init`、唯讀掛載 ADC、依賴安裝
-- [ ] M3-2 🧑 DAG：extract → load → `dbt build`，以 logical date 參數化
-- [ ] M3-3 🧑 冪等驗證：同日重跑結果不變 + backfill
-- [ ] M3-4 🤖 retry 與失敗告警設定
+- [x] M3-1 🤖 `astro dev init`、唯讀掛載 ADC（640 + group_add 1000）、dbt 獨立 venv
+- [x] M3-2 🧑 DAG `cdp_daily`：5 表平行 extract → load → `dbt build`，以 ds 參數化
+- [x] M3-3 🧑 冪等驗證：同日重跑結果不變 + backfill
+- [x] M3-4 🤖 retry（指數退避）、execution_timeout、on_failure_callback
 
 M4 CI、架構圖、README、面試講稿
-- [ ] M4-1 🤖 Terraform state 搬到 GCS backend
-- [ ] M4-2 🤖 GitHub Actions：terraform fmt/validate、dbt compile、SQL lint
-- [ ] M4-3 🤖 架構圖
-- [ ] M4-4 🧑 README（設計決策、dbt vs Dataform、成本控制；Claude 起草）
-- [ ] M4-5 🧑 面試講稿（5 分鐘版 + 深挖版）+ 統一回顧所有面試題 + 決定是否 destroy
+- [x] M4-1 🤖 Terraform state 搬到 GCS backend（`mini-cdp-dedonzz-tfstate`，gcloud 建立、開版本控管）
+- [x] M4-2 🤖 GitHub Actions：ruff、sqlfluff、dbt parse、terraform fmt/validate
+- [x] M4-3 🤖 架構圖（README mermaid）
+- [x] M4-4 🧑 README（設計決策、dbt vs Dataform、成本控制）
+- [x] M4-5 🧑 面試講稿 `docs/interview-script.md`、導覽 `docs/walkthrough.md`
+- [ ] 回顧：照 `docs/walkthrough.md` 逐步講解 + 回答 `docs/interview-questions.md` + 決定是否 destroy
