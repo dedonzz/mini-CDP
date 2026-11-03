@@ -1,0 +1,17 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: cdp_raw
+    description: thelook_ecommerce 經 GCS Parquet 載入的原始層，依 dt 日分區。
+    tables:
+      - name: users
+        description: 每日全量快照
+      - name: products
+        description: 每日全量快照
+      - name: orders
+        description: 每日全量快照（status 會變動，來源沒有 updated_at）
+      - name: order_items
+        description: 每日全量快照
+      - name: events
+        description: 依 created_at 每日增量
