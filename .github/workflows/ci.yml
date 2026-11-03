@@ -1,0 +1,51 @@
+# 靜態檢查，不需要任何 GCP 憑證：格式、lint、Terraform 語法、dbt 專案能否解析。
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  python-and-sql:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v6
+      - name: ruff
+        run: |
+          uvx ruff check ingestion airflow/dags airflow/tests
+          uvx ruff format --check ingestion airflow/dags airflow/tests
+      - name: sqlfluff
+        run: uvx sqlfluff lint dbt/models dbt/tests
+
+  dbt:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: dbt
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --locked
+      - name: dbt deps + parse（只解析，不連 BigQuery）
+        run: |
+          uv run dbt deps --profiles-dir .
+          uv run dbt parse --profiles-dir .
+
+  terraform:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: terraform
+    steps:
+      - uses: actions/checkout@v5
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.17.1
+      - run: terraform fmt -check -recursive
+      - run: terraform init -backend=false -input=false
+      - run: terraform validate
