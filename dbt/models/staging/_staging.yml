@@ -1,0 +1,95 @@
+version: 2
+
+# 原則：主鍵與關聯壞掉 → error（下游一定算錯，擋住 pipeline）；
+#       業務規則 / 來源資料本身的瑕疵 → warn（記錄、通知，但不阻斷）。
+
+models:
+  - name: stg_users
+    description: 註冊用戶（最新快照），一列一位用戶。
+    columns:
+      - name: user_id
+        data_tests: [unique, not_null]
+      - name: email
+        data_tests: [not_null]
+      - name: gender
+        data_tests:
+          - accepted_values:
+              arguments: { values: ["M", "F"] }
+      - name: signed_up_at
+        data_tests: [not_null]
+
+  - name: stg_products
+    description: 商品（最新快照），一列一個商品。
+    columns:
+      - name: product_id
+        data_tests: [unique, not_null]
+      - name: retail_price
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments: { min_value: 0 }
+
+  - name: stg_orders
+    description: 訂單（最新快照），一列一張訂單。
+    data_tests:
+      - dbt_utils.expression_is_true:
+          arguments: { expression: "shipped_at is null or shipped_at >= ordered_at" }
+          config: { severity: warn }
+    columns:
+      - name: order_id
+        data_tests: [unique, not_null]
+      - name: user_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: { to: ref('stg_users'), field: user_id }
+      - name: order_status
+        data_tests:
+          - accepted_values:
+              arguments: { values: ["processing", "shipped", "complete", "cancelled", "returned"] }
+      - name: item_count
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments: { min_value: 1 }
+
+  - name: stg_order_items
+    description: 訂單明細（最新快照），一列一個售出品項。
+    columns:
+      - name: order_item_id
+        data_tests: [unique, not_null]
+      - name: order_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: { to: ref('stg_orders'), field: order_id }
+      - name: product_id
+        data_tests:
+          - relationships:
+              arguments: { to: ref('stg_products'), field: product_id }
+      - name: item_status
+        data_tests:
+          - accepted_values:
+              arguments: { values: ["processing", "shipped", "complete", "cancelled", "returned"] }
+      - name: sale_price
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments: { min_value: 0 }
+
+  - name: stg_events
+    description: 網站行為事件（完整歷史），一列一個事件。
+    columns:
+      - name: event_id
+        data_tests: [unique, not_null]
+      - name: user_id
+        description: 未登入訪客為 null；relationships 測試會自動略過 null。
+        data_tests:
+          - relationships:
+              arguments: { to: ref('stg_users'), field: user_id }
+              config: { severity: warn }
+      - name: event_type
+        data_tests:
+          - accepted_values:
+              arguments: { values: ["home", "department", "product", "cart", "purchase", "cancel"] }
+      - name: event_at
+        data_tests: [not_null]

@@ -4,6 +4,12 @@ sources:
   - name: raw
     schema: cdp_raw
     description: thelook_ecommerce 經 GCS Parquet 載入的原始層，依 dt 日分區。
+    config:
+      loaded_at_field: _extracted_at
+      # 每日排程：超過 1.5 天沒新資料先警告，超過 3 天視為 pipeline 壞掉
+      freshness:
+        warn_after: { count: 36, period: hour }
+        error_after: { count: 72, period: hour }
     tables:
       - name: users
         description: 每日全量快照
@@ -14,4 +20,4 @@ sources:
       - name: order_items
         description: 每日全量快照
       - name: events
-        description: 依 created_at 每日增量
+        description: 依 created_at 每日增量（歷史由 backfill_events.py 一次回補）
