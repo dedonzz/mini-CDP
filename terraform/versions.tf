@@ -8,7 +8,7 @@ terraform {
     }
   }
 
-  # State is local for now (gitignored); moved to a GCS backend in M4.
+  # State lives in a GCS backend (see backend.tf).
 }
 
 provider "google" {
